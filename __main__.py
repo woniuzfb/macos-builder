@@ -84,7 +84,7 @@ if not args.skip_sync_sources:
     with open('msa.commit', 'r') as file:
         clone_repo('msa', 'https://github.com/minecraft-linux/msa-manifest.git', file.read().replace('\n', ''))
     with open('mcpelauncher.commit', 'r') as file:
-        clone_repo('mcpelauncher', 'https://github.com/minecraft-linux/mcpelauncher-manifest.git', file.read().replace('\n', ''))
+        clone_repo('mcpelauncher', 'https://github.com/woniuzfb/mcpelauncher-manifest.git', file.read().replace('\n', ''))
     with open('mcpelauncher-ui.commit', 'r') as file:
         clone_repo('mcpelauncher-ui', 'https://github.com/minecraft-linux/mcpelauncher-ui-manifest.git', file.read().replace('\n', ''))
 

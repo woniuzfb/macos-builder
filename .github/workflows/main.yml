@@ -6,10 +6,10 @@ on:
         default: "[]"
       mcpelauncher-repo:
         type: string
-        default: https://github.com/minecraft-linux/mcpelauncher-manifest
+        default: https://github.com/woniuzfb/mcpelauncher-manifest
       mcpelauncher-ref:
         type: string
-        default: ${{ github.repository == 'minecraft-linux/mcpelauncher-manifest' && (github.sha || github.ref) || 'ng' }}
+        default: ${{ github.repository == 'woniuzfb/mcpelauncher-manifest' && (github.sha || github.ref) || 'ng' }}
       mcpelauncher-ui-repo:
         type: string
         default: https://github.com/minecraft-linux/mcpelauncher-ui-manifest
@@ -37,6 +37,9 @@ on:
       offset:
         type: number
         default: 0
+      run-offset:
+        type: number
+        default: 427
       build-m1:
         type: boolean
         default: false
@@ -442,7 +445,6 @@ jobs:
     if: "!(cancelled() || failure())"
     needs: [build-libcxx, buildopenssl, buildangle, build-protobuf, build-m1]
     permissions:
-      id-token: write # required to get an oidc token
       contents: read
     strategy:
       fail-fast: false
@@ -481,14 +483,11 @@ jobs:
         script: |
           core.setOutput("owner", context.repo.owner);
           core.setOutput("repo", context.repo.repo);
-          core.setOutput("build-number", "" + (${{ github.run_number }} + ${{ inputs.offset }}));
-    - uses: ChristopherHX/oidc@f8f35d97bc37ffbe779bb3ab8453920fedf6fb37
-      id: oidc
-      continue-on-error: true
+          core.setOutput("build-number", "" + (${{ github.run_number }} + ${{ inputs.run-offset }}));
     - uses: actions/checkout@v3
       with:
-        repository: ${{ steps.oidc.outputs.job_workflow_repo_name_and_owner || inputs.submodule-refs && 'minecraft-linux/macos-builder' || github.repository }}
-        ref: ${{ steps.oidc.outputs.job_workflow_repo_ref || inputs.submodule-refs && 'main' || github.sha || github.ref }}
+        repository: ${{ inputs.submodule-refs && 'woniuzfb/macos-builder' || github.repository }}
+        ref: ${{ inputs.submodule-refs && 'main' || github.sha || github.ref }}
     - name: Sync Submodule Sources
       if: ${{ !inputs.use-repo-files && inputs.submodule-refs }}
       uses: actions/github-script@v6
@@ -714,7 +713,7 @@ jobs:
         script: |
           core.setOutput("owner", context.repo.owner);
           core.setOutput("repo", context.repo.repo);
-          core.setOutput("build-number", "" + (${{ github.run_number }} + ${{ inputs.offset }}));
+          core.setOutput("build-number", "" + (${{ github.run_number }} + ${{ inputs.run-offset }}));
     - name: Download everything
       uses: actions/download-artifact@v3
       with:
@@ -735,7 +734,7 @@ jobs:
         from subprocess import check_call
         makedirs('dist')
         makedirs('dist2')
-        check_call(['curl', '-L', '-o', path.abspath(path.join('sparkle', 'appcast.xml')), 'https://github.com/${{ github.repository }}/releases/download/ng.dmg/appcast.xml'])
+        check_call(['curl', '-L', '-o', path.abspath(path.join('sparkle', 'appcast.xml')), 'https://github.com/minecraft-linux/macos-builder/releases/download/ng.dmg/appcast.xml'])
         tree = ET.parse(path.join('sparkle', 'appcast.xml'))
         root = tree.getroot()
         i = 0
