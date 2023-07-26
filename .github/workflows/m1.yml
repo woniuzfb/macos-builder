@@ -4,7 +4,7 @@ on:
     inputs:
       mcpelauncher-manifest-repo:
         description: 'mcpelauncher repo'
-        default: 'https://github.com/minecraft-linux/mcpelauncher-manifest.git'
+        default: 'https://github.com/woniuzfb/mcpelauncher-manifest.git'
         type: string
       mcpelauncher-manifest-ref:
         description: 'mcpelauncher ref'
